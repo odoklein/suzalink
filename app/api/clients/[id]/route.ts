@@ -39,17 +39,18 @@ export async function PATCH(
   const client = await clientPromise;
   const col = client.db().collection("clients");
 
-  let value;
+  let result;
   try {
-    ({ value } = await col.findOneAndUpdate(
+    result = await col.findOneAndUpdate(
       { _id: new ObjectId(params.id) },
       { $set: updates },
       { returnDocument: "after" }
-    ));
+    );
   } catch {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const value = result?.value;
   if (!value) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
